@@ -26,7 +26,7 @@ const StoreLayout = ({ children }) => {
             setIsSeller(data.isSeller)
             setStoreInfo(data.storeInfo)
         } catch (error) {
-            console.log(error)
+            console.log("API Error:", error.response?.data || error.message)
         }
         finally{
             setLoading(false)
