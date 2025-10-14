@@ -7,11 +7,11 @@ import { NextResponse } from "next/server";
 // Add a new product
 export async function POST(request) {
     try {
-        const {userId} = getAuth(request);
+        const { userId } = getAuth(request);
         const storeId = await authSeller(userId)
 
-        if(!storeId){
-            return NextResponse.json({error: "not athorized"}, {status: 401})
+        if (!storeId) {
+            return NextResponse.json({ error: "not athorized" }, { status: 401 })
         }
 
         //Get the data from the form
@@ -23,13 +23,13 @@ export async function POST(request) {
         const category = formData.get("category")
         const images = formData.getAll("images")
 
-        if (!name || !description || !mrp || !price || !category || images.length < 1){
-            return NextResponse.json({error: "missing product details"}, {status: 400})
+        if (!name || !description || !mrp || !price || !category || images.length < 1) {
+            return NextResponse.json({ error: "missing product details" }, { status: 400 })
         }
 
         // Uploading images to imagekit
-        const imagesUrl = await Promise.all(images.map(async(image)=>{
-            const buffer = buffer.from(await image.arrayBuffer());
+        const imagesUrl = await Promise.all(images.map(async (image) => {
+            const buffer = Buffer.from(await image.arrayBuffer());
             const response = await imagekit.upload({
                 file: buffer,
                 fileName: image.name,
@@ -38,23 +38,25 @@ export async function POST(request) {
             const url = imagekit.url({
                 path: response.filePath,
                 transformation: [
-                    {quality: "auto"},
-                    {format: "webp"},
-                    {width: "1024"}
+                    { quality: "auto" },
+                    { format: "webp" },
+                    { width: "1024" }
                 ]
             })
             return url
         }))
 
         await prisma.product.create({
-            data:{
+            data: {
                 name,
                 description,
                 mrp,
                 price,
                 category,
                 images: imagesUrl,
-                store
+                store: {
+                    connect: { id: storeId },
+                },
             }
         })
 
@@ -65,21 +67,21 @@ export async function POST(request) {
         console.error(error);
         return NextResponse.json({
             error: error.code || error.message
-        },{status: 400});
+        }, { status: 400 });
     }
 }
 
 // Get all  products for a seller
 export async function GET(request) {
     try {
-        const {userId} = getAuth(request);
+        const { userId } = getAuth(request);
         const storeId = await authSeller(userId)
 
-         if(!storeId){
-            return NextResponse.json({error: "not athorized"}, {status: 401})
+        if (!storeId) {
+            return NextResponse.json({ error: "not athorized" }, { status: 401 })
         }
         const products = await prisma.product.findMany({
-            where: {storeId}
+            where: { storeId }
         });
         return NextResponse.json({
             products
@@ -88,7 +90,7 @@ export async function GET(request) {
         console.error(error);
         return NextResponse.json({
             error: error.code || error.message
-        },{status: 400});
+        }, { status: 400 });
     }
 }
 
