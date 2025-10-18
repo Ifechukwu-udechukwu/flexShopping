@@ -7,7 +7,7 @@ export async function GET(request) {
     try {
         //Get store username from query params
         const { searchParams } = new URL(request.url)
-        const username = searchParams.get("usernmae").toLocaleLowerCase();
+        const username = searchParams.get("username").toLowerCase();
 
         if (!username) {
             return NextResponse.json({ error: "missing username" }, { status: 400 })
