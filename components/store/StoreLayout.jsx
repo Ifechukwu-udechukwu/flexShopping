@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react"
 import Loading from "../Loading"
 import Link from "next/link"
-import { ArrowRightIcon } from "lucide-react"
+import { ArrowRightIcon, Menu, X } from "lucide-react"
 import SellerNavbar from "./StoreNavbar"
 import SellerSidebar from "./StoreSidebar"
 import { dummyStoreData } from "@/assets/assets"
@@ -18,6 +18,7 @@ const StoreLayout = ({ children }) => {
     const [isSeller, setIsSeller] = useState(false)
     const [loading, setLoading] = useState(true)
     const [storeInfo, setStoreInfo] = useState(null)
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
     const fetchIsSeller = async () => {
         try {
@@ -41,10 +42,30 @@ const StoreLayout = ({ children }) => {
         <Loading />
     ) : isSeller ? (
         <div className="flex flex-col h-screen">
-            <SellerNavbar />
+            <SellerNavbar onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />
             <div className="flex flex-1 items-start h-full overflow-y-scroll no-scrollbar">
-                <SellerSidebar storeInfo={storeInfo} />
-                <div className="flex-1 h-full p-5 lg:pl-12 lg:pt-12 overflow-y-scroll">
+                {/* Mobile Sidebar Overlay */}
+                {isSidebarOpen && (
+                    <div className="fixed inset-0 z-50 lg:hidden">
+                        <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setIsSidebarOpen(false)}></div>
+                        <div className="fixed left-0 top-0 h-full w-64 bg-white shadow-lg">
+                            <div className="flex items-center justify-between p-4 border-b">
+                                <h2 className="text-lg font-semibold">Menu</h2>
+                                <button onClick={() => setIsSidebarOpen(false)} className="p-2">
+                                    <X size={20} />
+                                </button>
+                            </div>
+                            <SellerSidebar storeInfo={storeInfo} isMobile={true} onLinkClick={() => setIsSidebarOpen(false)} />
+                        </div>
+                    </div>
+                )}
+                
+                {/* Desktop Sidebar */}
+                <div className="hidden lg:block">
+                    <SellerSidebar storeInfo={storeInfo} />
+                </div>
+                
+                <div className="flex-1 h-full p-3 sm:p-5 lg:pl-12 lg:pt-12 overflow-y-scroll">
                     {children}
                 </div>
             </div>

@@ -15,8 +15,81 @@
     button {
         cursor: pointer;
     }
+    
+    /* Mobile-specific improvements */
+    @media (max-width: 768px) {
+        html {
+            font-size: 14px;
+        }
+        
+        body {
+            -webkit-text-size-adjust: 100%;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Improve touch targets */
+        button, a, input, select, textarea {
+            min-height: 44px;
+            min-width: 44px;
+        }
+        
+        /* Better scrolling on mobile */
+        * {
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* Prevent zoom on input focus */
+        input, select, textarea {
+            font-size: 16px;
+        }
+    }
+    
+    /* Tablet and desktop improvements */
+    @media (min-width: 769px) {
+        html {
+            font-size: 16px;
+        }
+    }
 }
 
 .no-scrollbar::-webkit-scrollbar {
     display: none;
+}
+
+/* Mobile-specific utility classes */
+@media (max-width: 640px) {
+    .mobile-px {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+    
+    .mobile-py {
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+    }
+    
+    .mobile-text-sm {
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+    }
+    
+    .mobile-text-xs {
+        font-size: 0.75rem;
+        line-height: 1rem;
+    }
+}
+
+/* Touch-friendly hover states for mobile */
+@media (hover: none) and (pointer: coarse) {
+    .hover\:scale-103:hover {
+        transform: none;
+    }
+    
+    .hover\:bg-slate-900:hover {
+        background-color: rgb(15 23 42);
+    }
+    
+    .hover\:bg-indigo-600:hover {
+        background-color: rgb(79 70 229);
+    }
 }
